@@ -1,24 +1,44 @@
 import * as THREE from 'three';
 
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const threejsSphere = () => {
 
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild( renderer.domElement );
+  let scene = new THREE.Scene();
+  let camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.01, 1000);
 
-let gemotery = new THREE.SphereBufferGeometry(5, 32, 32);
-let material = new THREE.MeshBasicMaterial({ color: 0xfff00 });
-let sphere = new THREE.Mesh(gemotery, material);
-scene.add(sphere);
+  let renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild( renderer.domElement );
 
-camera.position.z = 5;
+  let geometry = new THREE.SphereBufferGeometry(0.3, 32, 32);
+  let texture = new THREE.TextureLoader().load('../../images/earth_surface.jpg')
+  let material = new THREE.MeshPhongMaterial({ map: texture })
+  let sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
 
-let animate = function() {
-  requestAnimationFrame( animate );
-  sphere.rotation.x += 0.01;
-  sphere.rotation.y += 0.01;
-  renderer.render(scene, camera );
+  let starGeometry = new THREE.SphereGeometry(5, 84, 64);
+  let starTexture = new THREE.TextureLoader().load('../../images/starfield.png');
+  let starMaterial = new THREE.MeshBasicMaterial({ map: starTexture, side: THREE.BackSide })
+  let stars = new THREE.Mesh(starGeometry, starMaterial);
+  scene.add(stars)
+
+  scene.add(new THREE.AmbientLight(0x333333));
+  let light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(5, 3, 5)
+  scene.add(light);
+
+  camera.position.z = 1.5;
+
+  let animate = function() {
+    requestAnimationFrame( animate );
+    sphere.rotation.x += 0.005;
+    sphere.rotation.y += 0.005;
+    renderer.render(scene, camera );
+  }
+
+  window.scene = scene;
+  window.camera = camera;
+  window.geometry = geometry;
+  animate();
 }
 
-animate();
+export default threejsSphere;
