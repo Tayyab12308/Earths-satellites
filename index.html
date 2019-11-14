@@ -6,16 +6,63 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="https://d3js.org/d3.v4.js"></script>
-  <link rel="stylesheet" type="text/scss" href="src/styles/index.scss" />
+  <link rel="stylesheet" type="text/css" href="./dist/main.css" />
 </head>
 <body>
-  <div id="root"></div>
+  <div class="header">All Satellites That Have Been Launched Into Space Since 1960</div>
+  <div class="content">
+    <div class="description">
+      <p>
+        This is an animated scatter plot of all satellites that have been launched into space since the 1960's. The
+        information was
+        retrieved from the Space-track API. The Y-axis represents the farthest distance from Earth each satellite will
+        reach, this is
+        called the Apogee. The X-axis represents how long it takes each satellite to complete one orbit around the Earth.
+        This data is being
+        year, so you can see which kinds of satellites were launched the most per year. <br />
+        <br />
+        There are three classes of satellites: <br />
+        1.) Geostationary Orbit (GEO) - A satellite in a geostationary orbit appears to be in a fixed position to an
+        earth-based observer. A geostationary
+        satellite revolves around the earth at a constant speed once per day over the equator. The geostationary orbit is
+        useful
+        for communications applications because ground based antennas, which must be directed toward the satellite, can
+        operate
+        effectively without the need for expensive equipment to track the satellite’s motion. Geostationary satellites are
+        constrained to operate above the equator. As a consequence, they are not always suitable
+        for providing services at high latitudes: at high latitudes, a geostationary satellite will appear low on the
+        horizon,affecting connectivity
+        <br />
+        <br />
+        2.) Medium Earth Orbit (MEO) - The most common use for satellites in this region is for navigation, such as the GPS
+        (with an altitude of
+        20,200·kilometres), Glonass (with an altitude of 19,100·kilometres) and Galileo (with an altitude of
+        23,222·kilometres)
+        constellations. Communications satellites that cover the North and South Pole are also put in MEO. The
+        orbital·periods
+        of MEO satellites range from about 2 to 24 hours. Telstar, one of the first and most famous experimental satellites,
+        orbits in MEO.
+        <br />
+        <br />
+        3.) Low Earth Orbit(LEO) -Low earth orbits (LEO) are satellite systems used in telecommunication, which orbit
+        between 400 and 1,000 miles above
+        the earth's surface. Since they have a low orbit they have very short period, about 90 minutes They are used mainly
+        for data communication such as email and video conferencing. They move
+        at extremely high speeds and are not fixed in space in relation to the earth. Since they are not in a fixed position
+        a whole network
+        of satellites is required for continuous coverage.
+      </p>
+    </div>
+    <div id="root"></div>
+  </div>
+  
+
   <script>
 
     // set the dimensions and margins of the graph
     let margin = { top: 10, right: 30, bottom: 30, left: 60 },
-      width = 1300 - margin.left - margin.right,
-      height = 800 - margin.top - margin.bottom;
+      width = 812.5 - margin.left - margin.right,
+      height = 650 - margin.top - margin.bottom;
     // append the svg object to the body of the page
     let svg = d3.select("#root")
       .append("svg")
@@ -28,48 +75,68 @@
     //Read the data
     d3.csv("./src/data.csv", function (data) {
 
-      // Add X axis
-      let x = d3.scaleLinear()
-        .domain([0, 0])
-        .range([0, width]);
-      svg.append("g")
-        .attr("class", "myXaxis")   // Note that here we give a class to the X axis, to be able to call it later and modify it
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
-        .attr("opacity", "0")
+    // Add X axis
+    let x = d3.scaleLinear()
+      .domain([0, 0])
+      .range([0, width]);
+    svg.append("g")
+      .attr("class", "myXaxis")   // Note that here we give a class to the X axis, to be able to call it later and modify it
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .attr("opacity", "0")
 
-      // Add Y axis
-      let y = d3.scaleLinear()
-        .domain([0, 50000])
-        .range([height, 0]);
-      svg.append("g")
-        .call(d3.axisLeft(y));
 
-      // Add dots
-      svg.append('g')
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", d => x(parseFloat(d.PERIOD)))
-        .attr("cy", d => y(parseFloat(d.APOGEE)))
-        .attr("r", 3.5)
-        .style("fill", "#69b3a2")
+    // Add X axis label:
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", width - 300)
+      .attr("y", height + 40)
+      .text("Duration of Orbit (minutes)")
 
-      // new X axis
-      x.domain([0, 2000])
-      svg.select(".myXaxis")
-        .transition()
-        .duration(2000)
-        .attr("opacity", "1")
-        .call(d3.axisBottom(x));
+    // Add Y axis
+    let y = d3.scaleLinear()
+      .domain([0, 50000])
+      .range([height, 0]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
 
-      svg.selectAll("circle")
-        .transition()
-        .delay(function (d, i) { return (i) })
-        .duration(1500)
-        .attr("cx", function (d) { return x(parseFloat(d.PERIOD)); })
-        .attr("cy", function (d) { return y(parseFloat(d.APOGEE)); })
+    // Add Y axis label:
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", 0)
+      .attr("y",  40)
+      .attr("color", "white")
+      .text("Height from Earth (Kilometers")
+      .attr("text-anchor", "start")
+      .attr("class", "y-axis-text")
+      .attr("x", width - 1050)
+      .attr("y", height - 660)
+
+    // Add dots
+    svg.append('g')
+      .selectAll("dot")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(parseFloat(d.PERIOD)))
+      .attr("cy", d => y(parseFloat(d.APOGEE)))
+      .attr("r", 1.5)
+      .style("fill", "#69b3a2");
+
+    // new X axis
+    x.domain([0, 2000])
+    svg.select(".myXaxis")
+      .transition()
+      .duration(2000)
+      .attr("opacity", "1")
+      .call(d3.axisBottom(x))
+
+    svg.selectAll("circle")
+      .transition()
+      .delay((d, i) => i )
+      .duration(1500)
+      .attr("cx", d => x(parseFloat(d.PERIOD)))
+      .attr("cy", d => y(parseFloat(d.APOGEE)))
     })
 
   </script>

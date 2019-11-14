@@ -9,8 +9,7 @@
 }
 
 svg {
- align-items: center;
-
+  overflow: visible;
 }
 
 .description {
@@ -22,4 +21,7 @@ svg {
   justify-content: center;
 }
 
-/*# sourceMappingURL=main.css.map*/
+.y-axis-text {
+  transform: rotate(-90deg);
+}
+
